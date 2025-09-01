@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["id", "description", "confidence_score", "metadata"],
+  "properties": {
+    "id": { "type": "string" },
+    "description": { "type": "string" },
+    "confidence_score": { "type": "number" },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "usage_statistics": {
+          "type": "object",
+          "properties": {
+            "total_applications": { "type": "number" },
+            "successful_applications": { "type": "number" },
+            "failed_applications": { "type": "number" }
+          },
+          "required": ["total_applications", "successful_applications", "failed_applications"]
+        }
+      },
+      "required": ["usage_statistics"]
+    }
+  }
+}

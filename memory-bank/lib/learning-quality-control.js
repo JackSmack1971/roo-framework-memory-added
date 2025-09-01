@@ -1,5 +1,6 @@
 const fs = require('fs/promises');
 const path = require('path');
+const yaml = require('js-yaml');
 const LearningProtocolClient = require('./learning-protocol-client');
 const LearningWorkflowHelpers = require('./learning-workflow-helpers');
 const DocumentationValidator = require('./documentation-validator');
@@ -18,14 +19,21 @@ class LearningQualityControl {
       return { passed: false, error_type: 'QualityGateError' };
     }
     const key = `${this.modeName}_${gateType}`;
+    const checks = await this.runDocumentationChecks(artifact, gateType);
+    const checkCount = checks.length;
+    const overallScore =
+      checks.reduce((sum, c) => sum + (c.score || 0), 0) / (checkCount || 1);
+    const threshold = await this.getQualityThreshold(gateType);
+    const passed = checks.every(c => c.passed) && overallScore >= threshold;
     const metrics = {
       mode: this.modeName,
       gate_type: gateType,
-      overall_score: 0,
-      passed: false,
-      check_count: 1,
+      overall_score: overallScore,
+      passed,
+      threshold,
+      check_count: checkCount,
       learning_enhanced: false,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     this.qualityMetrics.set(key, metrics);
     return metrics;
@@ -66,9 +74,29 @@ class LearningQualityControl {
       {
         check: type || 'documentation',
         passed: false,
-        score: 0
-      }
+        score: 0,
+      },
     ];
+  }
+
+  async getQualityThreshold(gateType) {
+    const defaultThreshold = 0.8;
+    const root = process.cwd();
+    try {
+      const rulesPath = path.join(root, '.roo', 'rules', `${gateType}.json`);
+      const data = JSON.parse(await fs.readFile(rulesPath, 'utf8'));
+      if (typeof data.threshold === 'number') return data.threshold;
+    } catch {}
+    try {
+      const roomodes = yaml.load(
+        await fs.readFile(path.join(root, '.roomodes'), 'utf8'),
+      );
+      const t =
+        roomodes?.qualityGate?.thresholds?.[gateType] ??
+        roomodes?.qualityGate?.default;
+      if (typeof t === 'number') return t;
+    } catch {}
+    return defaultThreshold;
   }
 }
 

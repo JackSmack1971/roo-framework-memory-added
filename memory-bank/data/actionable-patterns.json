@@ -1,0 +1,14 @@
+[
+  {
+    "id": "auth_mechanism_undefined_v1",
+    "description": "Authentication mechanism is undefined.",
+    "confidence_score": 0.5,
+    "metadata": {
+      "usage_statistics": {
+        "total_applications": 0,
+        "successful_applications": 0,
+        "failed_applications": 0
+      }
+    }
+  }
+]

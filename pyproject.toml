@@ -1,0 +1,293 @@
+[build-system]
+requires = ["setuptools>=68.0.0", "wheel>=0.41.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "roo-autonomous-ai-framework"
+version = "1.0.0"
+description = "99% Autonomous AI Development Framework with Intelligent Agent Orchestration"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "JackSmack1971", email = "jacksmack1971@example.com"},
+]
+maintainers = [
+    {name = "Roo Framework Team", email = "team@roo-framework.dev"},
+]
+keywords = [
+    "ai",
+    "autonomous",
+    "development", 
+    "agents",
+    "orchestration",
+    "quality-assurance",
+    "sparc",
+    "claude",
+    "openai",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9", 
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Quality Assurance",
+    "Typing :: Typed",
+]
+requires-python = ">=3.8"
+dependencies = [
+    # Core dependencies (keep in sync with requirements.txt)
+    "fastapi>=0.104.0,<1.0.0",
+    "uvicorn[standard]>=0.24.0,<1.0.0",
+    "pydantic>=2.4.0,<3.0.0",
+    "sqlalchemy>=2.0.0,<3.0.0",
+    "psycopg[binary]>=3.1.0,<4.0.0",
+    "redis>=5.0.0,<6.0.0",
+    "celery>=5.3.0,<6.0.0",
+    "anthropic>=0.3.0,<1.0.0",
+    "openai>=1.0.0,<2.0.0",
+    "httpx>=0.25.0,<1.0.0",
+    "pyyaml>=6.0.1,<7.0.0",
+    "jsonschema>=4.19.0,<5.0.0",
+    "aiofiles>=23.0.0,<24.0.0",
+    "cryptography>=41.0.0,<42.0.0",
+    "loguru>=0.7.0,<1.0.0",
+    "click>=8.1.0,<9.0.0",
+    "rich>=13.6.0,<14.0.0",
+    # Scientific packages with Python version constraints
+    "numpy>=1.24.0,<2.0.0; python_version<'3.13'",
+    "numpy>=1.26.0,<2.0.0; python_version>='3.13'",
+    "pandas>=2.1.0,<3.0.0; python_version<'3.13'",
+    "pandas>=2.1.4,<3.0.0; python_version>='3.13'",
+]
+
+[project.optional-dependencies]
+# Development dependencies
+dev = [
+    "pytest>=7.4.0,<8.0.0",
+    "pytest-asyncio>=0.21.0,<1.0.0",
+    "pytest-cov>=4.1.0,<5.0.0",
+    "pytest-mock>=3.12.0,<4.0.0",
+    "ruff>=0.1.0,<1.0.0",
+    "mypy>=1.6.0,<2.0.0",
+    "black>=23.9.0,<24.0.0",
+    "pre-commit>=3.5.0,<4.0.0",
+]
+
+# AI/ML optional dependencies (with Python version compatibility)
+ml = [
+    "numpy>=1.24.0,<2.0.0; python_version<'3.13'",
+    "numpy>=1.26.0,<2.0.0; python_version>='3.13'",
+    "pandas>=2.1.0,<3.0.0; python_version<'3.13'",
+    "pandas>=2.1.4,<3.0.0; python_version>='3.13'",
+    "scikit-learn>=1.3.0,<2.0.0; python_version<'3.13'",
+    "scikit-learn>=1.4.0,<2.0.0; python_version>='3.13'",
+    "torch>=2.1.0,<3.0.0",
+    "transformers>=4.35.0,<5.0.0",
+]
+
+# Minimal installation (core autonomous AI without heavy ML dependencies)
+minimal = [
+    "fastapi>=0.104.0,<1.0.0",
+    "uvicorn[standard]>=0.24.0,<1.0.0",
+    "anthropic>=0.3.0,<1.0.0",
+    "openai>=1.0.0,<2.0.0",
+    "httpx>=0.25.0,<1.0.0",
+    "pyyaml>=6.0.1,<7.0.0",
+    "jsonschema>=4.19.0,<5.0.0",
+]
+
+# Security analysis tools
+security = [
+    "bandit>=1.7.5,<2.0.0",
+    "safety>=2.3.5,<3.0.0",
+    "semgrep>=1.45.0,<2.0.0",
+]
+
+# Documentation generation
+docs = [
+    "sphinx>=7.2.0,<8.0.0",
+    "sphinx-rtd-theme>=1.3.0,<2.0.0",
+    "myst-parser>=2.0.0,<3.0.0",
+]
+
+# Complete development environment
+all = [
+    "roo-autonomous-ai-framework[dev,ml,security,docs]",
+]
+
+[project.urls]
+Homepage = "https://github.com/JackSmack1971/roo-autonomous-ai-framework"
+Documentation = "https://roo-framework.readthedocs.io"
+Repository = "https://github.com/JackSmack1971/roo-autonomous-ai-framework.git"
+Issues = "https://github.com/JackSmack1971/roo-autonomous-ai-framework/issues"
+Changelog = "https://github.com/JackSmack1971/roo-autonomous-ai-framework/blob/main/CHANGELOG.md"
+
+[project.scripts]
+roo-validate = "scripts.validate_config:main"
+roo-audit = "scripts.audit_autonomous_actions:main"
+roo-report = "scripts.generate_sprint_report:main"
+
+# Tool configurations
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["scripts*", "memory-bank*"]
+exclude = ["tests*", "docs*"]
+
+[tool.ruff]
+target-version = "py38"
+line-length = 88
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+    "ARG", # flake8-unused-arguments
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+]
+ignore = [
+    "E501", # line too long (handled by black)
+    "B008", # do not perform function calls in argument defaults
+    "B905", # zip without strict parameter
+]
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    ".pytest_cache",
+    "build",
+    "dist",
+    "*.egg-info",
+]
+
+[tool.ruff.per-file-ignores]
+"tests/**/*.py" = ["ARG001", "ARG002", "S101"]
+"scripts/**/*.py" = ["T201"] # Allow print statements in scripts
+
+[tool.black]
+target-version = ['py38', 'py39', 'py310', 'py311']
+line-length = 88
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.pytest_cache
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.8"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_any_generics = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+implicit_reexport = false
+strict_equality = true
+
+# Module-specific overrides
+[[tool.mypy.overrides]]
+module = [
+    "yaml.*",
+    "aiofiles.*", 
+    "anthropic.*",
+    "openai.*",
+    "celery.*",
+    "redis.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = [
+    "--strict-markers",
+    "--strict-config", 
+    "--cov=scripts",
+    "--cov=memory-bank",
+    "--cov-report=term-missing",
+    "--cov-report=html:htmlcov",
+    "--cov-report=xml",
+    "--cov-fail-under=85",
+]
+testpaths = ["tests"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "autonomous: marks tests that test autonomous agent behavior",
+    "quality: marks tests related to quality assurance",
+    "security: marks security-related tests",
+]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["scripts", "memory-bank"]
+omit = [
+    "tests/*",
+    "*/tests/*", 
+    "*/__pycache__/*",
+    "*/site-packages/*",
+    ".venv/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", "build", "dist"]
+skips = ["B101"] # Skip assert_used test
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+known_first_party = ["scripts", "memory_bank"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.0.0"
+tag_format = "v$major.$minor.$patch$prerelease"
+version_files = [
+    "pyproject.toml:version"
+]

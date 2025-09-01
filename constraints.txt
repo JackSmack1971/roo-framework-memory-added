@@ -1,0 +1,94 @@
+# ==============================================================================
+# Roo Autonomous AI Development Framework - Dependency Constraints
+# ==============================================================================
+#
+# Version constraints to ensure compatibility and reproducible builds.
+# Use with: pip install -r requirements.txt -c constraints.txt
+#
+# This file pins transitive dependencies that can cause conflicts in
+# complex AI development environments with multiple async libraries.
+#
+# PYTHON 3.13 COMPATIBILITY: Special constraints for newest Python version
+# ==============================================================================
+
+# CRITICAL: Python 3.13 Compatibility Matrix
+# Many packages don't have pre-built wheels for Python 3.13 yet
+# These constraints ensure we get compatible versions
+
+# Core Constraint - Python Version Compatibility
+# Python 3.8-3.12: Standard versions, Python 3.13: Latest with limited support
+
+# Scientific Stack - Python 3.13 Specific Constraints
+numpy>=1.26.0,<2.0.0; python_version>="3.13"           # First version with Python 3.13 support
+scipy>=1.11.4,<2.0.0; python_version>="3.13"           # Scientific computing
+matplotlib>=3.8.2,<4.0.0; python_version>="3.13"       # Plotting (avoid if not needed)
+
+# Fallback for Python 3.13: Use pure Python alternatives where possible
+# If scientific packages fail, consider these lightweight alternatives:
+# - Use built-in statistics module instead of numpy for basic math
+# - Use json/csv modules instead of pandas for data processing
+# - Use requests/httpx for HTTP instead of scientific HTTP libraries
+
+# HTTP/Network Library Compatibility
+urllib3>=1.26.0,<3.0.0           # Used by requests, httpx
+certifi>=2023.7.22               # SSL certificates
+charset-normalizer>=3.0.0,<4.0.0 # Character encoding
+idna>=3.4,<4.0.0                 # Internationalized domain names
+
+# Async Library Compatibility
+anyio>=3.7.0,<5.0.0              # Async compatibility layer
+sniffio>=1.3.0,<2.0.0            # Async library detection
+trio>=0.22.0,<1.0.0              # Alternative async library
+h11>=0.14.0,<1.0.0               # HTTP/1.1 protocol implementation
+h2>=4.1.0,<5.0.0                 # HTTP/2 protocol implementation
+
+# Cryptographic Library Constraints
+cffi>=1.15.0,<2.0.0              # Foreign function interface
+pycparser>=2.21,<3.0.0           # C parser for cffi
+
+# Data Processing Constraints  
+pytz>=2023.3                     # Timezone definitions (frozen version)
+six>=1.16.0                      # Python 2/3 compatibility utilities
+packaging>=23.0                  # Version parsing utilities
+
+# Parsing & Serialization
+markupsafe>=2.1.0,<3.0.0         # XML/HTML/XHTML markup safe strings
+lxml>=4.9.0,<5.0.0               # XML parsing (if needed)
+
+# Database Driver Constraints
+psycopg2-binary>=2.9.7,<3.0.0    # PostgreSQL adapter (alternative to psycopg)
+greenlet>=2.0.0,<3.0.0           # Lightweight coroutines for SQLAlchemy
+
+# Testing Framework Constraints
+pluggy>=1.3.0,<2.0.0             # Plugin management system (pytest)
+exceptiongroup>=1.1.0,<2.0.0     # Exception groups backport
+tomli>=2.0.1,<3.0.0              # TOML parser
+iniconfig>=2.0.0,<3.0.0          # INI file parser
+
+# Development Tool Constraints
+setuptools>=68.0.0,<70.0.0       # Package building
+wheel>=0.41.0,<1.0.0             # Package format
+pip>=23.2.0,<24.0.0              # Package installer
+
+# AI Library Constraints
+tiktoken>=0.5.0,<1.0.0           # OpenAI tokenizer
+distro>=1.8.0,<2.0.0             # OS detection for AI libraries
+
+# Monitoring & Logging Constraints
+click>=8.0.0,<9.0.0              # Command line interface creation
+colorama>=0.4.6,<1.0.0           # Cross-platform colored terminal text
+tabulate>=0.9.0,<1.0.0           # Pretty-print tabular data
+
+# Security Constraints - Force Latest Versions
+setuptools>=68.0.0               # Security fixes in recent versions
+pip>=23.2.0                     # Security fixes in recent versions
+certifi>=2023.7.22              # Latest SSL certificates
+cryptography>=41.0.0            # Latest cryptographic fixes
+
+# Performance Constraints
+cython>=3.0.0,<4.0.0            # C extensions for performance
+numba>=0.58.0,<1.0.0            # JIT compilation (optional)
+
+# Memory Management
+psutil>=5.9.0,<6.0.0            # Process and system utilities
+pympler>=0.9,<1.0.0             # Memory profiling utilities

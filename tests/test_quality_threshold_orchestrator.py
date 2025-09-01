@@ -311,6 +311,29 @@ class TestQualityThresholdOrchestrator(unittest.TestCase):
         self.assertEqual(updated_data["project_phase"], "release")
         self.assertEqual(updated_data["gate_thresholds"]["security"], 0.9)
 
+    async def test_write_config_cleans_temp_on_failure(self):
+        """write_config cleans up temporary files when replacement fails."""
+        orchestrator = QualityThresholdOrchestrator(self.dashboard_path)
+
+        new_config = ThresholdConfig(
+            project_phase="release",
+            gate_thresholds={
+                "security": 0.9, "code": 0.8, "performance": 0.85, "architecture": 0.9, "general": 0.8,
+                "api_documentation": 0.85, "code_documentation": 0.8, "architecture_documentation": 0.9, "usage_documentation": 0.8
+            },
+            learning_adjustments={
+                "security": 0.05, "code": -0.02, "performance": 0.03, "architecture": 0.02, "general": 0.01,
+                "api_documentation": 0.03, "code_documentation": -0.01, "architecture_documentation": 0.02, "usage_documentation": 0.01
+            },
+            updated_at=datetime(2025, 8, 29, 1, 0, 0, tzinfo=timezone.utc)
+        )
+
+        with patch('os.replace', side_effect=OSError("boom")), \
+             self.assertRaises(OrchestratorUpdateError):
+            await orchestrator.write_config(new_config)
+
+        self.assertEqual(sorted(os.listdir(self.temp_dir)), ['test-dashboard.json'])
+
     async def test_trigger_threshold_recalculation_phase_only(self):
         """Test global trigger function with phase only."""
         with patch.dict(os.environ, {'QUALITY_DASHBOARD_PATH': self.dashboard_path}):

@@ -1,0 +1,64 @@
+epics:
+  - id: E-100
+    name: User Authentication System
+    stories:
+      - id: US-101
+        title: As a user, I can sign up with email and password
+        priority: High
+        acceptance: 
+          - "Email verification required before account activation"
+          - "Password complexity requirements enforced"
+          - "Rate limiting implemented for signup attempts"
+          - "Audit logging for all authentication events"
+          - "GDPR compliance for user data handling"
+      
+      - id: US-102  
+        title: As a user, I can log in with my credentials
+        priority: High
+        acceptance:
+          - "Secure authentication with bcrypt password hashing"
+          - "JWT token generation for session management"
+          - "Failed login attempt tracking and account lockout"
+          - "Multi-factor authentication option available"
+          
+      - id: US-103
+        title: As a user, I can reset my password if forgotten
+        priority: Medium
+        acceptance:
+          - "Email-based password reset with secure tokens"
+          - "Token expiration within 1 hour"
+          - "Old password invalidation after reset"
+          - "Email notification of password change"
+
+  - id: E-200
+    name: User Profile Management
+    stories:
+      - id: US-201
+        title: As a user, I can view and edit my profile information
+        priority: Medium
+        acceptance:
+          - "Profile data validation on client and server side"
+          - "Profile picture upload with size and type restrictions"
+          - "Email change requires verification of new address"
+          - "Activity log for profile modifications"
+      
+      - id: US-202
+        title: As a user, I can manage my privacy settings
+        priority: Medium
+        acceptance:
+          - "Granular privacy controls for profile visibility"
+          - "Data export functionality for GDPR compliance"
+          - "Account deletion with data purge option"
+          - "Consent management for data processing"
+
+  - id: E-300
+    name: System Administration
+    stories:
+      - id: US-301
+        title: As an admin, I can manage user accounts
+        priority: Medium
+        acceptance:
+          - "User search and filtering capabilities"
+          - "Account suspension and reactivation"
+          - "Role-based access control implementation"
+          - "Admin action audit trail"

@@ -1,0 +1,134 @@
+# Issue Detection & Routing Patterns
+# Standardized patterns for detecting and routing issues between modes
+
+version: "2.0"
+pattern_library:
+  complexity_escalation_patterns:
+    authentication_complexity:
+      triggers:
+        - "multiple auth methods"
+        - "social login integration"
+        - "role-based permissions"
+      specialist_needed: "sparc-security-architect"
+      confidence_threshold: 0.8
+
+issue_patterns:
+  
+  # Security-Related Issues
+  security_gaps:
+    indicators: 
+      - "authentication_mechanism_undefined"
+      - "authorization_controls_missing" 
+      - "data_encryption_not_specified"
+      - "input_validation_absent"
+      - "session_management_unclear"
+    severity: "high"
+    route_to: "sparc-security-architect"
+    context_required: ["architecture.md", "data_flows", "user_interactions"]
+    acceptance_criteria:
+      - "threat_model_updated"
+      - "security_controls_defined"
+      - "attack_vectors_addressed"
+
+  compliance_violations:
+    indicators:
+      - "gdpr_requirements_not_addressed"
+      - "pci_compliance_missing"
+      - "hipaa_considerations_absent"
+      - "audit_trails_undefined"
+    severity: "high"
+    route_to: "compliance-specialist"  # Dynamic mode creation
+    context_required: ["regulations", "data_handling", "user_consent"]
+    acceptance_criteria:
+      - "compliance_requirements_mapped"
+      - "controls_implemented"
+      - "audit_procedures_defined"
+
+  # Performance-Related Issues  
+  performance_bottlenecks:
+    indicators:
+      - "n_plus_one_query_patterns"
+      - "unbounded_collections"
+      - "blocking_io_operations"
+      - "inefficient_algorithms"
+      - "memory_leaks_possible"
+    severity: "medium"
+    route_to: "performance-engineer"  # Dynamic mode creation
+    context_required: ["architecture.md", "data_access_patterns", "load_requirements"]
+    acceptance_criteria:
+      - "bottlenecks_identified"
+      - "optimization_strategy_defined"
+      - "performance_tests_created"
+
+  # Database-Related Issues
+  data_modeling_issues:
+    indicators:
+      - "complex_query_requirements"
+      - "data_consistency_challenges"
+      - "transaction_boundary_unclear"
+      - "orm_performance_concerns"
+      - "data_migration_complexity"
+    severity: "medium"
+    route_to: "database-specialist"  # Dynamic mode creation
+    context_required: ["data_requirements", "query_patterns", "consistency_needs"]
+    acceptance_criteria:
+      - "data_model_optimized"
+      - "query_performance_validated"
+      - "migration_strategy_defined"
+
+  # Integration-Related Issues
+  api_design_complexity:
+    indicators:
+      - "multiple_integration_patterns"
+      - "version_compatibility_concerns"  
+      - "rate_limiting_requirements"
+      - "api_gateway_needs"
+      - "service_discovery_required"
+    severity: "medium"
+    route_to: "integration-specialist"  # Dynamic mode creation
+    context_required: ["service_architecture", "api_requirements", "integration_patterns"]
+    acceptance_criteria:
+      - "api_design_standardized"
+      - "integration_patterns_defined"
+      - "service_contracts_specified"
+
+  # Code Quality Issues
+  technical_debt_accumulation:
+    indicators:
+      - "code_duplication_high"
+      - "cyclomatic_complexity_excessive"
+      - "test_coverage_below_threshold"
+      - "dependency_vulnerabilities"
+      - "outdated_frameworks"
+    severity: "low"
+    route_to: "code-quality-specialist"  # Dynamic mode creation
+    context_required: ["codebase_analysis", "quality_metrics", "maintenance_requirements"]
+    acceptance_criteria:
+      - "debt_assessment_complete"
+      - "refactoring_plan_created"
+      - "quality_improvements_prioritized"
+
+# Escalation Patterns
+escalation_rules:
+  
+  # Technical Escalations
+  architecture_conflicts:
+    trigger: "multiple_modes_disagree_on_architecture"
+    escalate_to: "sparc-orchestrator"
+    resolution_approach: "technical_decision_framework"
+    
+  security_vs_performance:
+    trigger: "security_requirements_conflict_with_performance"
+    escalate_to: "sparc-orchestrator"
+    resolution_approach: "stakeholder_priority_framework"
+    
+  # Process Escalations  
+  infinite_delegation_loop:
+    trigger: "same_issue_bounced_between_modes_3_times"
+    escalate_to: "sparc-orchestrator"
+    resolution_approach: "joint_task_creation"
+    
+  quality_gate_failures:
+    trigger: "mode_output_fails_quality_gates_3_times"
+    escalate_to: "quality-assurance-coordinator"
+    resolution_approach: "root_cause_analysis"

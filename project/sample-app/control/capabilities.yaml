@@ -1,0 +1,145 @@
+# Mode Capabilities Registry
+# Each mode declares expertise, capabilities, and collaboration patterns
+
+capabilities:
+  sparc-orchestrator:
+    role: "system_coordinator"
+    primary_expertise: ["workflow_management", "conflict_resolution", "strategic_oversight"]
+    secondary_capabilities: ["priority_balancing", "resource_allocation", "quality_enforcement"]
+    can_detect: ["workflow_conflicts", "infinite_loops", "strategic_drift", "quality_regressions"]
+    can_resolve: ["mode_conflicts", "priority_disputes", "resource_contention", "workflow_deadlocks"]
+    creates_tasks_for: ["any_mode"]
+    escalation_authority: true
+    circuit_breaker_controls: true
+
+  sparc-specification-writer:
+    role: "requirements_specialist"
+    primary_expertise: ["requirements_gathering", "acceptance_criteria", "user_stories"]
+    secondary_capabilities: ["stakeholder_analysis", "scope_definition", "risk_identification"]
+    can_detect: ["ambiguous_requirements", "missing_acceptance_criteria", "scope_creep", "conflicting_stakeholder_needs"]
+    can_resolve: ["requirement_ambiguity", "acceptance_criteria_gaps", "user_story_completeness"]
+    creates_tasks_for: ["data-researcher", "rapid-fact-checker", "sparc-architect", "sparc-ux-architect"]
+    quality_gates:
+      - "all_requirements_testable"
+      - "acceptance_criteria_defined"
+      - "stakeholder_alignment_confirmed"
+      - "non_functional_requirements_captured"
+
+  data-researcher:
+    role: "evidence_specialist"
+    primary_expertise: ["market_research", "technical_analysis", "competitive_intelligence"]
+    secondary_capabilities: ["data_synthesis", "trend_analysis", "source_validation"]
+    can_detect: ["insufficient_evidence", "conflicting_data", "outdated_information", "bias_in_sources"]
+    can_resolve: ["data_gaps", "source_conflicts", "evidence_quality_issues"]
+    creates_tasks_for: ["rapid-fact-checker", "sparc-architect", "sparc-security-architect"]
+    mcp_dependencies: ["exa", "perplexity", "context7"]
+    quality_gates:
+      - "multiple_sources_confirmed"
+      - "confidence_levels_documented"
+      - "evidence_freshness_verified"
+      - "bias_assessment_complete"
+
+  sparc-architect:
+    role: "system_designer"
+    primary_expertise: ["system_architecture", "component_design", "integration_patterns"]
+    secondary_capabilities: ["performance_analysis", "scalability_planning", "technology_selection"]
+    can_detect: ["architectural_inconsistencies", "scalability_issues", "integration_complexity", "security_gaps", "performance_bottlenecks"]
+    can_resolve: ["design_conflicts", "component_coupling_issues", "architectural_debt"]
+    creates_tasks_for: ["sparc-security-architect", "database-specialist", "performance-engineer", "integration-specialist", "sparc-pseudocode-designer"]
+    quality_gates:
+      - "all_components_defined"
+      - "interfaces_specified"
+      - "data_flows_complete"
+      - "non_functional_requirements_addressed"
+      - "security_boundaries_identified"
+
+  sparc-security-architect:
+    role: "security_specialist"
+    primary_expertise: ["threat_modeling", "security_architecture", "compliance_analysis"]
+    secondary_capabilities: ["risk_assessment", "security_controls", "audit_requirements"]
+    can_detect: ["threat_vectors", "compliance_gaps", "security_vulnerabilities", "privacy_violations"]
+    can_resolve: ["security_architecture_issues", "threat_model_gaps", "compliance_deficiencies"]
+    creates_tasks_for: ["sparc-architect", "data-privacy-specialist", "compliance-specialist", "sparc-autonomous-adversary"]
+    quality_gates:
+      - "threat_model_complete"
+      - "security_controls_defined"
+      - "compliance_requirements_mapped"
+      - "privacy_impact_assessed"
+  sparc-code-implementer:
+    role: "implementation_specialist"
+    primary_expertise: ["code_implementation", "refactoring", "debugging"]
+    secondary_capabilities: ["performance_optimization", "code_quality", "maintainability"]
+    can_detect: ["implementation_bugs", "performance_issues", "code_quality_problems", "maintainability_concerns"]
+    can_resolve: ["coding_errors", "performance_bottlenecks", "refactoring_needs"]
+    creates_tasks_for: ["sparc-tdd-engineer", "performance-engineer", "code-quality-specialist", "sparc-qa-analyst"]
+    quality_gates:
+      - "all_tests_passing"
+      - "code_quality_standards_met"
+      - "no_security_vulnerabilities"
+      - "performance_requirements_satisfied"
+
+  sparc-tdd-engineer:
+    role: "test_specialist"
+    primary_expertise: ["test_design", "coverage_analysis", "tdd_practices"]
+    secondary_capabilities: ["test_automation", "integration_testing", "performance_testing"]
+    can_detect: ["coverage_gaps", "test_quality_issues", "integration_test_missing", "performance_test_gaps"]
+    can_resolve: ["test_completeness", "coverage_improvement", "test_reliability_issues"]
+    creates_tasks_for: ["sparc-code-implementer", "performance-engineer", "integration-specialist", "sparc-qa-analyst"]
+    quality_gates:
+      - "coverage_above_90_percent"
+      - "all_edge_cases_tested"
+      - "integration_tests_defined"
+      - "performance_tests_included"
+
+  quality-assurance-coordinator:
+    role: "system_quality_monitor"
+    primary_expertise: ["quality_monitoring", "consistency_checking", "standards_enforcement"]
+    secondary_capabilities: ["quality_intervention", "metrics_tracking", "trend_analysis"]
+    can_detect: ["quality_regressions", "consistency_issues", "standard_violations", "quality_trends"]
+    can_resolve: ["quality_issues", "consistency_problems", "standard_enforcement"]
+    creates_tasks_for: ["any_specialist_mode"]
+    monitors_all_modes: true
+    continuous_quality_assessment: true
+    quality_gates:
+      - "overall_quality_above_85_percent"
+      - "cross_mode_consistency_maintained"
+      - "quality_standards_enforced"
+      - "quality_trends_positive"
+
+  technical-debt-manager:
+    role: "debt_tracker"
+    primary_expertise: ["debt_detection", "debt_prioritization", "maintenance_planning"]
+    secondary_capabilities: ["refactoring_coordination", "debt_trend_analysis", "prevention_strategies"]
+    can_detect: ["technical_debt_accumulation", "architecture_erosion", "maintenance_issues"]
+    can_resolve: ["debt_prioritization", "maintenance_scheduling", "refactoring_coordination"]
+    creates_tasks_for: ["code-quality-specialist", "sparc-architect", "sparc-orchestrator"]
+    tracks_technical_decisions: true
+    identifies_improvement_opportunities: true
+    prioritizes_maintenance_tasks: true
+
+# Dynamic Mode Creation Patterns
+dynamic_modes:
+  database-specialist:
+    trigger_conditions: ["complex_data_operations", "performance_bottlenecks", "data_modeling_needs"]
+    inherits_from: "sparc-architect"
+    specialized_expertise: ["database_design", "query_optimization", "data_modeling"]
+
+  performance-engineer:
+    trigger_conditions: ["performance_requirements", "scalability_concerns", "optimization_needs"]
+    inherits_from: "sparc-architect"  
+    specialized_expertise: ["performance_optimization", "load_testing", "scalability_analysis"]
+
+  integration-specialist:
+    trigger_conditions: ["complex_integrations", "api_design", "service_mesh_needs"]
+    inherits_from: "sparc-architect"
+    specialized_expertise: ["api_design", "service_integration", "protocol_selection"]
+
+  security-reviewer:
+    trigger_conditions: ["security_validation_needed", "vulnerability_assessment", "code_security_review"]
+    inherits_from: "sparc-security-architect"
+    specialized_expertise: ["code_security_review", "vulnerability_assessment", "security_testing"]
+
+  code-quality-specialist:
+    trigger_conditions: ["technical_debt", "code_quality_issues", "maintainability_concerns"]
+    inherits_from: "sparc-code-implementer"
+    specialized_expertise: ["code_quality", "refactoring", "technical_debt_management"]

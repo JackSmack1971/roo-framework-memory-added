@@ -1,0 +1,114 @@
+{
+  "schema": "QUALITY_DASHBOARD/V2",
+  "project_id": "sample-app",
+  "updated_at": "2025-08-25T00:00:00Z",
+  "project_phase": "dev",
+  "overall_quality_score": null,
+  "quality_trend": "initializing",
+
+  "gate_thresholds": {
+    "security": 0.85,
+    "performance": 0.8,
+    "code": 0.75,
+    "architecture": 0.8,
+    "general": 0.7
+  },
+
+  "learning_adjustments": {
+    "security": 0.0,
+    "performance": 0.0,
+    "code": 0.0,
+    "architecture": 0.0,
+    "general": 0.0
+  },
+  
+  "quality_by_domain": {
+    "architecture": {
+      "score": null,
+      "trend": "pending",
+      "key_metrics": {
+        "component_cohesion": null,
+        "interface_stability": null,
+        "architectural_debt": "unknown"
+      }
+    },
+    "security": {
+      "score": null,
+      "trend": "pending",
+      "key_metrics": {
+        "threat_coverage": null,
+        "control_implementation": null,
+        "vulnerability_count": 0
+      }
+    },
+    "implementation": {
+      "score": null,
+      "trend": "pending",
+      "key_metrics": {
+        "code_coverage": null,
+        "cyclomatic_complexity": "unknown",
+        "maintainability_index": null
+      }
+    },
+    "testing": {
+      "score": null,
+      "trend": "pending",
+      "key_metrics": {
+        "test_coverage": null,
+        "test_reliability": null,
+        "assertion_quality": null
+      }
+    },
+    "integration": {
+      "score": null,
+      "trend": "pending",
+      "key_metrics": {
+        "integration_success_rate": null,
+        "data_consistency": null,
+        "error_handling": null
+      }
+    }
+  },
+  
+  "active_quality_issues": [],
+  
+  "quality_interventions": {
+    "total_interventions": 0,
+    "successful_resolutions": 0,
+    "average_resolution_time": null,
+    "prevention_effectiveness": null
+  },
+  
+  "quality_gates_status": {
+    "architecture_completeness": "pending",
+    "security_validation": "pending",
+    "implementation_standards": "pending",
+    "test_coverage_targets": "pending",
+    "integration_reliability": "pending"
+  },
+  
+  "quality_trends": {
+    "last_24_hours": {
+      "direction": "stable",
+      "change": 0.0
+    },
+    "last_week": {
+      "direction": "stable",
+      "change": 0.0
+    },
+    "last_month": {
+      "direction": "initializing",
+      "change": 0.0
+    }
+  },
+
+  "intelligent_analysis": {
+    "velocity_quality_optimization": {
+      "optimal_quality_speed_balance": 0.85,
+      "current_balance_score": null,
+      "optimization_recommendations": []
+    }
+  },
+
+  "predictive_quality_indicators": []
+}

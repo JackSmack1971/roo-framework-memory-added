@@ -8,16 +8,18 @@ with various scenarios including error conditions and edge cases.
 import asyncio
 import json
 import os
+import sys
 import tempfile
 import unittest
-from unittest.mock import patch, MagicMock
-import sys
+from datetime import datetime, timezone
+from unittest.mock import patch
 
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 # Import the orchestration module
 import importlib.util
+
 spec = importlib.util.spec_from_file_location(
     "orchestration.main",
     os.path.join(os.path.dirname(__file__), '..', 'src', 'orchestration', 'main.py')
@@ -297,13 +299,13 @@ class TestQualityThresholdOrchestrator(unittest.TestCase):
                 "security": 0.05, "code": -0.02, "performance": 0.03, "architecture": 0.02, "general": 0.01,
                 "api_documentation": 0.03, "code_documentation": -0.01, "architecture_documentation": 0.02, "usage_documentation": 0.01
             },
-            updated_at="2025-08-29T01:00:00Z"
+            updated_at=datetime(2025, 8, 29, 1, 0, 0, tzinfo=timezone.utc)
         )
 
         await orchestrator.write_config(new_config)
 
         # Verify file was updated
-        with open(self.dashboard_path, 'r') as f:
+        with open(self.dashboard_path) as f:
             updated_data = json.load(f)
 
         self.assertEqual(updated_data["project_phase"], "release")

@@ -114,7 +114,7 @@ class QualityThresholdOrchestrator:
                     self._last_config = config
                     return config
 
-            except (FileNotFoundError, json.JSONDecodeError, asyncio.TimeoutError) as e:
+            except (FileNotFoundError, json.JSONDecodeError, asyncio.TimeoutError, ValueError) as e:
                 if attempt == retries - 1:
                     raise OrchestratorUpdateError(f"Failed to read dashboard config after {retries} attempts", e)
 

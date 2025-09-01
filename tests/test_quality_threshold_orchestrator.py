@@ -129,8 +129,58 @@ class TestQualityThresholdOrchestrator(unittest.TestCase):
 
         orchestrator = QualityThresholdOrchestrator(self.dashboard_path)
 
-        with self.assertRaises(OrchestratorUpdateError):
+        with self.assertRaises(OrchestratorUpdateError) as cm:
             await orchestrator.read_current_config()
+
+        self.assertIsInstance(cm.exception.cause, ValueError)
+
+    async def test_read_current_config_missing_project_phase(self):
+        """read_current_config wraps missing project_phase errors."""
+        config = dict(self.initial_config)
+        del config["project_phase"]
+
+        with open(self.dashboard_path, 'w') as f:
+            json.dump(config, f)
+
+        orchestrator = QualityThresholdOrchestrator(self.dashboard_path)
+
+        with self.assertRaises(OrchestratorUpdateError) as cm:
+            await orchestrator.read_current_config()
+
+        self.assertIsInstance(cm.exception.cause, ValueError)
+        self.assertIn("project_phase", str(cm.exception.cause))
+
+    async def test_read_current_config_missing_gate_thresholds(self):
+        """read_current_config wraps missing gate_thresholds errors."""
+        config = dict(self.initial_config)
+        del config["gate_thresholds"]
+
+        with open(self.dashboard_path, 'w') as f:
+            json.dump(config, f)
+
+        orchestrator = QualityThresholdOrchestrator(self.dashboard_path)
+
+        with self.assertRaises(OrchestratorUpdateError) as cm:
+            await orchestrator.read_current_config()
+
+        self.assertIsInstance(cm.exception.cause, ValueError)
+        self.assertIn("gate_thresholds", str(cm.exception.cause))
+
+    async def test_read_current_config_missing_learning_adjustments(self):
+        """read_current_config wraps missing learning_adjustments errors."""
+        config = dict(self.initial_config)
+        del config["learning_adjustments"]
+
+        with open(self.dashboard_path, 'w') as f:
+            json.dump(config, f)
+
+        orchestrator = QualityThresholdOrchestrator(self.dashboard_path)
+
+        with self.assertRaises(OrchestratorUpdateError) as cm:
+            await orchestrator.read_current_config()
+
+        self.assertIsInstance(cm.exception.cause, ValueError)
+        self.assertIn("learning_adjustments", str(cm.exception.cause))
 
     async def test_phase_transition_success(self):
         """Test successful phase transition."""

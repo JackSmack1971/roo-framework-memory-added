@@ -9,6 +9,8 @@ import asyncio
 import json
 import logging
 import os
+import tempfile
+from contextlib import suppress
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
@@ -139,10 +141,13 @@ class QualityThresholdOrchestrator:
         """
         async with self._lock:
             for attempt in range(retries):
+                temp_path = None
                 try:
                     # Read current dashboard content to preserve other fields
                     async with aiofiles.open(self.dashboard_path) as f:
-                        current_content = await asyncio.wait_for(f.read(), timeout=self.timeout_ms / 1000)
+                        current_content = await asyncio.wait_for(
+                            f.read(), timeout=self.timeout_ms / 1000
+                        )
                         dashboard_data = json.loads(current_content)
 
                     # Update threshold-related fields
@@ -153,17 +158,29 @@ class QualityThresholdOrchestrator:
                     dashboard_data['updated_at'] = now.isoformat()
                     config.updated_at = now
 
-                    # Write updated configuration
-                    async with aiofiles.open(self.dashboard_path, 'w') as f:
+                    # Write updated configuration to temp file
+                    fd, temp_path = tempfile.mkstemp(
+                        dir=os.path.dirname(self.dashboard_path),
+                        prefix='.dashboard.',
+                        suffix='.tmp'
+                    )
+                    os.close(fd)
+                    async with aiofiles.open(temp_path, 'w') as f:
                         await asyncio.wait_for(
                             f.write(json.dumps(dashboard_data, indent=2)),
                             timeout=self.timeout_ms / 1000
                         )
+                    os.replace(temp_path, self.dashboard_path)
 
-                    logger.info(f"Successfully updated quality thresholds for phase: {config.project_phase}")
+                    logger.info(
+                        f"Successfully updated quality thresholds for phase: {config.project_phase}"
+                    )
                     return
 
-                except (FileNotFoundError, json.JSONDecodeError, asyncio.TimeoutError) as e:
+                except (FileNotFoundError, json.JSONDecodeError, asyncio.TimeoutError, OSError) as e:
+                    if temp_path and os.path.exists(temp_path):
+                        with suppress(OSError):
+                            os.unlink(temp_path)
                     if attempt == retries - 1:
                         raise OrchestratorUpdateError(
                             f"Failed to write dashboard config after {retries} attempts", e

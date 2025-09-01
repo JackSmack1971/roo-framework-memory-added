@@ -1,0 +1,39 @@
+{
+  "issue_id": "1234567890abcdef1234567890abcdef12345678",
+  "source": "demo",
+  "source_rule_id": "python:S1481",
+  "language": "python",
+  "title": "Unused local variables should be removed",
+  "summary": "If a local variable is declared but not used, it is dead code and should be removed. Doing so will improve maintainability because developers will not wonder what the variable is used for.",
+  "root_cause": "Variable declared but never referenced in scope",
+  "fix_steps": "1. Remove the unused variable declaration\n2. Review code logic to ensure variable was not intended to be used\n3. Consider using underscore prefix for intentionally unused variables",
+  "autofix_snippet": "# Remove unused variable\n# del unused_var\n# Or use underscore prefix: _unused_var = value",
+  "severity": "minor",
+  "confidence": 0.9,
+  "taxonomy": {
+    "cwe": ["CWE-563"],
+    "owasp": []
+  },
+  "frequency": "common",
+  "signals": [
+    {
+      "kind": "rule_id",
+      "value": "python:S1481"
+    }
+  ],
+  "references": [
+    {
+      "label": "SonarCloud Rule Documentation",
+      "url": "https://sonarcloud.io/organizations/default/rules?open=python%3AS1481&rule_key=python%3AS1481",
+      "license": "Demo data"
+    }
+  ],
+  "metadata": {
+    "type": "code_smell",
+    "tags": ["unused", "maintainability"],
+    "remediation": {
+      "effort": "5min"
+    }
+  },
+  "updated_at": "2025-09-01T14:42:00Z"
+}

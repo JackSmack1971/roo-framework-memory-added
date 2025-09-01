@@ -1,0 +1,299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Autonomous Workflow State Management",
+  "description": "Schema for managing autonomous AI development workflow state",
+  "type": "object",
+  "required": ["schema", "project_id", "updated_at", "orchestrator_mode"],
+  "properties": {
+    "schema": {
+      "const": "WORKFLOW_STATE/V2",
+      "description": "Schema version for autonomous workflow management"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique project identifier"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    },
+    "orchestrator_mode": {
+      "type": "string",
+      "description": "Primary orchestrator mode managing this workflow"
+    },
+    "current_phase": {
+      "type": ["string", "null"],
+      "description": "Current development phase or 'multi-phase' for parallel work"
+    },
+    "workflow_intelligence": {
+      "type": "object",
+      "properties": {
+        "adaptive_routing_enabled": {
+          "type": "boolean",
+          "description": "Whether intelligent issue routing is active"
+        },
+        "quality_monitoring_active": {
+          "type": "boolean", 
+          "description": "Whether continuous quality monitoring is enabled"
+        },
+        "circuit_breakers_armed": {
+          "type": "boolean",
+          "description": "Whether circuit breaker protection is active"
+        },
+        "learning_mode": {
+          "type": "string",
+          "enum": ["active", "passive", "disabled"],
+          "description": "Learning and adaptation mode"
+        }
+      },
+      "additionalProperties": false
+    },
+    "active_tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["task_id", "mode", "status", "objective", "created_by", "created_at"],
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "Unique task identifier"
+          },
+          "mode": {
+            "type": "string",
+            "description": "Mode responsible for this task"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "running", "blocked", "completed", "failed"],
+            "description": "Current task status"
+          },
+          "objective": {
+            "type": "string",
+            "description": "Task objective and deliverables"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Mode that created this task"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "parent_task": {
+            "type": ["string", "null"],
+            "description": "Parent task ID if this is a subtask"
+          },
+          "children_tasks": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "estimated_completion": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "context": {
+            "type": "object",
+            "description": "Additional task context"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "delegation_chains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["chain_id", "sequence"],
+        "properties": {
+          "chain_id": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "current_depth": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "max_depth": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "circuit_breaker_status": {
+            "type": "string",
+            "enum": ["normal", "warning", "triggered"]
+          }
+        }
+      }
+    },
+    "detected_issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["issue_id", "type", "severity", "detected_by", "detected_at"],
+        "properties": {
+          "issue_id": {"type": "string"},
+          "type": {"type": "string"},
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "detected_by": {"type": "string"},
+          "detected_at": {"type": "string", "format": "date-time"},
+          "description": {"type": "string"},
+          "affected_tasks": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "routing_recommendation": {"type": "string"},
+          "auto_create_task": {"type": "boolean"}
+        }
+      }
+    },
+    "circuit_breaker_states": {
+      "type": "object",
+      "properties": {
+        "infinite_delegation_prevention": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string", 
+              "enum": ["armed", "triggered", "cooldown"]
+            },
+            "max_delegation_depth": {"type": "integer"},
+            "current_max_depth": {"type": "integer"},
+            "cooldown_period": {"type": "string"}
+          }
+        },
+        "quality_regression_protection": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["monitoring", "triggered", "recovering"]
+            },
+            "quality_threshold": {"type": "number"},
+            "current_quality_score": {"type": ["number", "null"]},
+            "intervention_trigger": {"type": "string"}
+          }
+        },
+        "resource_contention_management": {
+          "type": "object", 
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["normal", "contention", "rebalancing"]
+            },
+            "concurrent_task_limit": {"type": "integer"},
+            "current_active_tasks": {"type": "integer"},
+            "high_priority_task_limit": {"type": "integer"}
+          }
+        }
+      }
+    },
+    "quality_oversight": {
+      "type": "object",
+      "properties": {
+        "overall_quality_score": {"type": ["number", "null"]},
+        "quality_trend": {
+          "type": "string",
+          "enum": ["improving", "stable", "declining", "initializing"]
+        },
+        "active_quality_interventions": {"type": "integer"},
+        "project_phase": {
+          "type": "string",
+          "enum": ["init", "dev", "stabilization", "release"],
+          "description": "Current project development phase"
+        },
+        "gate_thresholds": {
+          "type": "object",
+          "description": "Baseline quality thresholds for different gate types",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "learning_adjustments": {
+          "type": "object",
+          "description": "Dynamic adjustments to thresholds based on learning",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": -1,
+            "maximum": 1
+          }
+        },
+        "quality_gates_status": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "enum": ["pending", "passed", "failed", "in_progress"]
+          }
+        }
+      }
+    },
+    "learning_state": {
+      "type": "object",
+      "properties": {
+        "patterns_recognized": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {"type": "string"},
+              "confidence": {"type": "number"},
+              "success_rate": {"type": "number"},
+              "auto_apply": {"type": "boolean"}
+            }
+          }
+        },
+        "adaptations_applied": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "adaptation": {"type": "string"},
+              "applied_at": {"type": "string", "format": "date-time"},
+              "effectiveness": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "autonomous_actions_taken": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": {"type": "string"},
+          "timestamp": {"type": "string", "format": "date-time"},
+          "trigger": {"type": "string"},
+          "decision_confidence": {"type": "number"},
+          "outcome": {"type": "string"}
+        }
+      }
+    },
+    "system_health": {
+      "type": "object",
+      "properties": {
+        "workflow_velocity": {"type": ["number", "null"]},
+        "quality_maintenance": {"type": ["number", "null"]},
+        "autonomous_decision_accuracy": {"type": ["number", "null"]},
+        "specialist_utilization_efficiency": {"type": ["number", "null"]},
+        "overall_system_effectiveness": {"type": ["number", "null"]}
+      }
+    }
+  },
+  "additionalProperties": false
+}

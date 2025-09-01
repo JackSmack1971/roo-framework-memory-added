@@ -1,0 +1,39 @@
+{
+  "issue_id": "abcdef1234567890abcdef1234567890abcdef12",
+  "source": "demo",
+  "source_rule_id": "python:S105",
+  "language": "python",
+  "title": "Tabulation characters should not be used",
+  "summary": "Developers should not need to configure the tab width of their text editors in order to be able to read source code. So the use of tabulation character must be forbidden.",
+  "root_cause": "Mixed use of tabs and spaces for indentation",
+  "fix_steps": "1. Replace all tabs with spaces (typically 4 spaces per tab in Python)\n2. Configure editor to show whitespace characters\n3. Set up automated formatting tools like Black or autopep8",
+  "autofix_snippet": "# Use spaces instead of tabs\n# Configure .editorconfig:\n# [*.py]\n# indent_style = space\n# indent_size = 4",
+  "severity": "minor",
+  "confidence": 0.95,
+  "taxonomy": {
+    "cwe": [],
+    "owasp": []
+  },
+  "frequency": "common",
+  "signals": [
+    {
+      "kind": "rule_id", 
+      "value": "python:S105"
+    }
+  ],
+  "references": [
+    {
+      "label": "PEP 8 Style Guide",
+      "url": "https://www.python.org/dev/peps/pep-0008/#tabs-or-spaces",
+      "license": "Python Software Foundation License"
+    }
+  ],
+  "metadata": {
+    "type": "code_smell",
+    "tags": ["formatting", "indentation", "pep8"],
+    "remediation": {
+      "effort": "2min"
+    }
+  },
+  "updated_at": "2025-09-01T14:42:00Z"
+}

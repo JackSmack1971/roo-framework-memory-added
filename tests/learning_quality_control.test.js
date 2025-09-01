@@ -32,3 +32,34 @@ test('runQualityGate handles invalid gate type', async () => {
   assert.equal(result.passed, false);
   assert.equal(result.error_type, 'QualityGateError');
 });
+
+test('runQualityGate passes when checks meet threshold', async () => {
+  const qc = createControl();
+  qc.runDocumentationChecks = async () => [
+    { check: 'doc', passed: true, score: 0.9 },
+  ];
+  const result = await qc.runQualityGate('artifact');
+  assert.equal(result.passed, true);
+  assert.equal(result.overall_score, 0.9);
+});
+
+test('runQualityGate fails when average below threshold', async () => {
+  const qc = createControl();
+  qc.runDocumentationChecks = async () => [
+    { check: 'doc', passed: true, score: 0.7 },
+  ];
+  const result = await qc.runQualityGate('artifact');
+  assert.equal(result.passed, false);
+  assert.equal(result.overall_score, 0.7);
+});
+
+test('runQualityGate passes at threshold edge case', async () => {
+  const qc = createControl();
+  qc.runDocumentationChecks = async () => [
+    { check: 'a', passed: true, score: 0.9 },
+    { check: 'b', passed: true, score: 0.7 },
+  ];
+  const result = await qc.runQualityGate('artifact');
+  assert.equal(result.overall_score, 0.8);
+  assert.equal(result.passed, true);
+});

@@ -22,14 +22,14 @@
 #
 # ==============================================================================
 
-import os
-import sys
-import json
-import yaml
 import argparse
 import asyncio
-from jsonschema import validate, ValidationError
+import json
+import os
+import sys
 
+import yaml
+from jsonschema import ValidationError, validate
 from path_utils import InvalidProjectPathError, resolve_project_path
 
 
@@ -120,11 +120,11 @@ class ConfigValidator:
         self._check_path(self.project_dir, is_dir=True)
         self._check_path(self.control_dir, is_dir=True)
         self._check_path(self.schema_dir, is_dir=True)
-        
+
         # Check control files
         for f in ["backlog.yaml", "sprint.yaml", "capabilities.yaml", "workflow-state.json", "quality-dashboard.json"]:
             self._check_path(os.path.join(self.control_dir, f))
-            
+
         # Check schema files
         for s in ["backlog_v1.schema.json", "workflow_state_v2.schema.json"]:
             self._check_path(os.path.join(self.schema_dir, s))
@@ -134,7 +134,7 @@ class ConfigValidator:
         print(f"\n{Colors.OKCYAN}--- 2. Validating .roomodes File ---{Colors.ENDC}")
         path = ".roomodes"
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 content = f.read()
         except OSError as e:
             raise ConfigValidationError(f"Could not read {path}") from e
@@ -151,7 +151,7 @@ class ConfigValidator:
         # --- capabilities.yaml ---
         path = os.path.join(self.control_dir, "capabilities.yaml")
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
         except FileNotFoundError as e:
             raise ConfigValidationError(f"Missing file: {path}") from e
@@ -167,7 +167,7 @@ class ConfigValidator:
         # --- sprint.yaml ---
         path = os.path.join(self.control_dir, "sprint.yaml")
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
         except FileNotFoundError as e:
             raise ConfigValidationError(f"Missing file: {path}") from e
@@ -185,7 +185,7 @@ class ConfigValidator:
     def _validate_json_files(self):
         """Validates JSON files against their defined schemas."""
         print(f"\n{Colors.OKCYAN}--- 4. Validating JSON Files Against Schemas ---{Colors.ENDC}")
-        
+
         validation_map = {
             "workflow-state.json": "workflow_state_v2.schema.json",
             # Add other JSON/schema mappings here
@@ -196,9 +196,9 @@ class ConfigValidator:
             schema_path = os.path.join(self.schema_dir, schema_file)
 
             try:
-                with open(data_path, "r", encoding="utf-8") as f:
+                with open(data_path, encoding="utf-8") as f:
                     data_instance = json.load(f)
-                with open(schema_path, "r", encoding="utf-8") as f:
+                with open(schema_path, encoding="utf-8") as f:
                     schema = json.load(f)
             except FileNotFoundError as e:
                 raise ConfigValidationError(f"Missing file: {e.filename}") from e
@@ -221,11 +221,28 @@ class ConfigValidator:
         """Ensures agents in capabilities.yaml are defined in .roomodes."""
         print(f"\n{Colors.OKCYAN}--- 5. Cross-Referencing Agent Capabilities ---{Colors.ENDC}")
         try:
-            with open(".roomodes", "r", encoding="utf-8") as f:
-                defined_modes = {line.strip() for line in f if line.strip()}
+            with open(".roomodes", encoding="utf-8") as f:
+                content = f.read()
+            try:
+                roomodes_data = yaml.safe_load(content)
+            except yaml.YAMLError:
+                try:
+                    roomodes_data = json.loads(content)
+                except json.JSONDecodeError as e:
+                    raise ConfigValidationError(
+                        f"Invalid YAML/JSON format in .roomodes: {e}"
+                    ) from e
+
+            if not isinstance(roomodes_data, dict):
+                roomodes_data = {}
+            defined_modes = {
+                mode.get("slug")
+                for mode in roomodes_data.get("customModes", [])
+                if isinstance(mode, dict) and mode.get("slug")
+            }
 
             cap_path = os.path.join(self.control_dir, "capabilities.yaml")
-            with open(cap_path, "r", encoding="utf-8") as f:
+            with open(cap_path, encoding="utf-8") as f:
                 project_caps = yaml.safe_load(f)
         except FileNotFoundError as e:
             raise ConfigValidationError(f"Missing file: {e.filename}") from e

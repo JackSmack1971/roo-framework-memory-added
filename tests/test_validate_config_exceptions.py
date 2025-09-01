@@ -1,3 +1,4 @@
+import json
 import sys
 from pathlib import Path
 
@@ -5,7 +6,7 @@ import pytest
 
 sys.path.append(str(Path(__file__).resolve().parent.parent / "scripts"))
 
-from validate_config import ConfigValidator, ConfigValidationError
+from validate_config import ConfigValidationError, ConfigValidator
 
 
 def test_invalid_yaml_raises(tmp_path, monkeypatch) -> None:
@@ -25,4 +26,42 @@ def test_invalid_yaml_raises(tmp_path, monkeypatch) -> None:
     validator = ConfigValidator("demo")
     with pytest.raises(ConfigValidationError):
         validator.run_validations()
+
+
+@pytest.mark.parametrize(
+    "roomodes_content",
+    [
+        "customModes:\n  - slug: a\n",
+        json.dumps({"customModes": [{"slug": "a"}]}),
+    ],
+)
+def test_cross_reference_capabilities(tmp_path, monkeypatch, roomodes_content) -> None:
+    control = tmp_path / "project" / "demo" / "control"
+    control.mkdir(parents=True)
+    (tmp_path / ".roomodes").write_text(roomodes_content)
+    (control / "capabilities.yaml").write_text("agents:\n- a\n")
+    monkeypatch.chdir(tmp_path)
+    validator = ConfigValidator("demo")
+    validator._cross_reference_capabilities()
+    assert validator.errors == 0
+
+
+@pytest.mark.parametrize(
+    "roomodes_content",
+    [
+        "customModes:\n  - slug: a\n",
+        json.dumps({"customModes": [{"slug": "a"}]}),
+    ],
+)
+def test_cross_reference_capabilities_missing(
+    tmp_path, monkeypatch, roomodes_content
+) -> None:
+    control = tmp_path / "project" / "demo" / "control"
+    control.mkdir(parents=True)
+    (tmp_path / ".roomodes").write_text(roomodes_content)
+    (control / "capabilities.yaml").write_text("agents:\n- a\n- b\n")
+    monkeypatch.chdir(tmp_path)
+    validator = ConfigValidator("demo")
+    validator._cross_reference_capabilities()
+    assert validator.errors == 1
 

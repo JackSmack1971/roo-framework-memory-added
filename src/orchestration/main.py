@@ -7,11 +7,12 @@ Provides centralized threshold management for the autonomous development framewo
 
 import asyncio
 import json
-import os
 import logging
-from typing import Dict, Any, Optional, List
+import os
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
+from typing import Any, Dict, Optional
+
 import aiofiles
 
 # Configure logging
@@ -33,7 +34,7 @@ class ThresholdConfig:
     project_phase: str
     gate_thresholds: Dict[str, float]
     learning_adjustments: Dict[str, float]
-    updated_at: str
+    updated_at: datetime
 
 
 class QualityThresholdOrchestrator:
@@ -92,7 +93,7 @@ class QualityThresholdOrchestrator:
         """
         for attempt in range(retries):
             try:
-                async with aiofiles.open(self.dashboard_path, 'r') as f:
+                async with aiofiles.open(self.dashboard_path) as f:
                     content = await asyncio.wait_for(f.read(), timeout=self.timeout_ms / 1000)
                     config_data = json.loads(content)
 
@@ -108,7 +109,7 @@ class QualityThresholdOrchestrator:
                         project_phase=config_data['project_phase'],
                         gate_thresholds=config_data['gate_thresholds'],
                         learning_adjustments=config_data['learning_adjustments'],
-                        updated_at=config_data.get('updated_at', datetime.now().isoformat())
+                        updated_at=self._parse_updated_at(config_data.get('updated_at'))
                     )
 
                     self._last_config = config
@@ -116,7 +117,9 @@ class QualityThresholdOrchestrator:
 
             except (FileNotFoundError, json.JSONDecodeError, asyncio.TimeoutError, ValueError) as e:
                 if attempt == retries - 1:
-                    raise OrchestratorUpdateError(f"Failed to read dashboard config after {retries} attempts", e)
+                    raise OrchestratorUpdateError(
+                        f"Failed to read dashboard config after {retries} attempts", e
+                    ) from e
 
                 # Exponential backoff
                 await asyncio.sleep(0.1 * (2 ** attempt))
@@ -138,7 +141,7 @@ class QualityThresholdOrchestrator:
             for attempt in range(retries):
                 try:
                     # Read current dashboard content to preserve other fields
-                    async with aiofiles.open(self.dashboard_path, 'r') as f:
+                    async with aiofiles.open(self.dashboard_path) as f:
                         current_content = await asyncio.wait_for(f.read(), timeout=self.timeout_ms / 1000)
                         dashboard_data = json.loads(current_content)
 
@@ -146,7 +149,9 @@ class QualityThresholdOrchestrator:
                     dashboard_data['project_phase'] = config.project_phase
                     dashboard_data['gate_thresholds'] = config.gate_thresholds
                     dashboard_data['learning_adjustments'] = config.learning_adjustments
-                    dashboard_data['updated_at'] = datetime.now().isoformat()
+                    now = datetime.now(timezone.utc)
+                    dashboard_data['updated_at'] = now.isoformat()
+                    config.updated_at = now
 
                     # Write updated configuration
                     async with aiofiles.open(self.dashboard_path, 'w') as f:
@@ -160,7 +165,9 @@ class QualityThresholdOrchestrator:
 
                 except (FileNotFoundError, json.JSONDecodeError, asyncio.TimeoutError) as e:
                     if attempt == retries - 1:
-                        raise OrchestratorUpdateError(f"Failed to write dashboard config after {retries} attempts", e)
+                        raise OrchestratorUpdateError(
+                            f"Failed to write dashboard config after {retries} attempts", e
+                        ) from e
 
                     # Exponential backoff
                     await asyncio.sleep(0.1 * (2 ** attempt))
@@ -198,7 +205,7 @@ class QualityThresholdOrchestrator:
                 project_phase=new_phase,
                 gate_thresholds=new_thresholds,
                 learning_adjustments=new_adjustments,
-                updated_at=datetime.now().isoformat()
+                updated_at=datetime.now(timezone.utc)
             )
 
             # Write updated configuration
@@ -208,7 +215,9 @@ class QualityThresholdOrchestrator:
             return updated_config
 
         except Exception as e:
-            raise OrchestratorUpdateError(f"Phase transition failed: {str(e)}", e)
+            raise OrchestratorUpdateError(
+                f"Phase transition failed: {str(e)}", e
+            ) from e
 
     async def update_learning_adjustments(self, feedback_data: Dict[str, Any]) -> ThresholdConfig:
         """
@@ -234,7 +243,7 @@ class QualityThresholdOrchestrator:
                 project_phase=current_config.project_phase,
                 gate_thresholds=current_config.gate_thresholds,
                 learning_adjustments=new_adjustments,
-                updated_at=datetime.now().isoformat()
+                updated_at=datetime.now(timezone.utc)
             )
 
             # Write updated configuration
@@ -244,7 +253,18 @@ class QualityThresholdOrchestrator:
             return updated_config
 
         except Exception as e:
-            raise OrchestratorUpdateError(f"Learning adjustment update failed: {str(e)}", e)
+            raise OrchestratorUpdateError(
+                f"Learning adjustment update failed: {str(e)}", e
+            ) from e
+
+    def _parse_updated_at(self, value: Optional[str]) -> datetime:
+        """Parse ISO 8601 timestamp into a timezone-aware datetime."""
+        if value:
+            try:
+                return datetime.fromisoformat(value.replace('Z', '+00:00'))
+            except ValueError:
+                pass
+        return datetime.now(timezone.utc)
 
     def _calculate_phase_thresholds(self, phase: str, base_thresholds: Dict[str, float]) -> Dict[str, float]:
         """Calculate phase-specific thresholds based on base values and phase multipliers."""
@@ -331,7 +351,7 @@ class QualityThresholdOrchestrator:
             if not isinstance(feedback, dict):
                 return False
 
-            for gate_type, metrics in feedback.items():
+            for _gate_type, metrics in feedback.items():
                 if not isinstance(metrics, dict) or 'success_rate' not in metrics:
                     return False
                 if not (0 <= metrics['success_rate'] <= 1):
